@@ -1,12 +1,39 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portipel SAS - Sistema de Listas</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/App.jsx"></script>
-  </body>
-</html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portipel SAS - Listas de Precios</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body{font-family:Arial, sans-serif;background:#f3f6fb;margin:0;color:#07152e} .wrap{max-width:1200px;margin:auto;padding:24px}.card{background:#fff;border:1px solid #d9e2ef;border-radius:18px;padding:20px;margin:16px 0;box-shadow:0 10px 25px #0001}.header{display:flex;justify-content:space-between;gap:16px;align-items:center}.brand{font-size:30px;font-weight:800}.sub{color:#516078}button{background:#07152e;color:white;border:0;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer}button.light{background:white;color:#07152e;border:1px solid #ccd6e3}button.red{background:#a81919}input,select{padding:12px;border:1px solid #cbd5e1;border-radius:12px;width:100%;box-sizing:border-box}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.tabs button{margin-right:8px;margin-bottom:8px}.tabs button.active{background:#07152e;color:white}table{width:100%;border-collapse:collapse;background:white}th,td{padding:12px;border-bottom:1px solid #e2e8f0;text-align:left}th{background:#f8fafc}.right{text-align:right}.hidden{display:none}@media print{body *{visibility:hidden}#pdf,#pdf *{visibility:visible}#pdf{position:absolute;left:0;top:0;width:100%;padding:30px}.no-print{display:none!important}.card{box-shadow:none;border:0}}
+</style>
+</head>
+<body><div class="wrap">
+<div class="card header no-print"><div><div class="brand">Portipel SAS - Listas de Precios</div><div class="sub">Cálculo por tonelada, formato, gramaje y hojas. USD sin IVA.</div></div><div><button onclick="print()">Generar PDF PRO</button> <button class="light" onclick="exportCSV()">Exportar CSV</button></div></div>
+<div class="tabs no-print"><button class="active" onclick="show('lista',this)">Lista cliente</button><button onclick="show('productos',this)">Productos</button><button onclick="show('clientes',this)">Clientes</button><button onclick="show('familias',this)">Familias</button><button onclick="show('especiales',this)">Especiales</button></div>
+<div id="productos" class="card hidden no-print"><h2>Productos</h2><div class="grid"><input id="pcodigo" placeholder="Código"><input id="pproducto" placeholder="Producto"><select id="pfamilia"></select><input id="pancho" type="number" placeholder="Ancho cm"><input id="palto" type="number" placeholder="Alto cm"><input id="pgramaje" type="number" placeholder="Gramaje"><input id="phojas" type="number" placeholder="Hojas"><input id="pton" type="number" placeholder="USD tonelada"></div><p><button onclick="addProduct()">Agregar producto</button></p></div>
+<div id="clientes" class="card hidden no-print"><h2>Clientes y aumentos</h2><div class="grid"><input id="cnombre" placeholder="Nombre cliente"><input id="cajuste" type="number" placeholder="% general"></div><p><button onclick="addClient()">Agregar cliente</button></p><h3>Aumentos por familia del cliente seleccionado</h3><select id="clienteSel2" onchange="selectedClientId=this.value;render()"></select><div id="familyAdjust" class="grid"></div></div>
+<div id="familias" class="card hidden no-print"><h2>Familias</h2><div class="grid"><input id="fnombre" placeholder="Nueva familia"><button onclick="addFamily()">Agregar familia</button></div><div id="familyList"></div></div>
+<div id="especiales" class="card hidden no-print"><h2>Precio especial por tonelada</h2><div class="grid"><select id="clienteEsp"></select><select id="productoEsp"></select><input id="tonEsp" type="number" placeholder="Tonelada especial USD"><button onclick="addSpecial()">Guardar especial</button></div><div id="specialTable"></div></div>
+<div id="lista" class="card no-print"><h2>Lista cliente</h2><select id="clienteSel" onchange="selectedClientId=this.value;render()"></select></div>
+<div id="pdf" class="card"><div class="header"><div><h1>Portipel SAS</h1><p>Lista de precios comercial</p><p>Precios en USD sin IVA</p></div><div><b>Cliente:</b> <span id="pdfCliente"></span><br><b>Fecha:</b> <span id="fecha"></span></div></div><table><thead><tr><th>Código</th><th>Producto</th><th>Formato</th><th>Gramaje</th><th class="right">Precio paquete</th></tr></thead><tbody id="priceRows"></tbody></table><p class="sub">Los precios están expresados en dólares estadounidenses y no incluyen IVA.</p></div>
+</div><script>
+let families=JSON.parse(localStorage.families||'["Obra Color","Cartulina","A4 Caja","Papel Antigrasa"]');
+let clients=JSON.parse(localStorage.clients||'[{"id":"1","nombre":"Cliente General","ajusteGeneral":0,"ajustesFamilia":{"Obra Color":10,"Cartulina":5},"ajustesProducto":{}}]');
+let products=JSON.parse(localStorage.products||'[{"id":"1","codigo":"OBR-001","producto":"Papel Obra Color","familia":"Obra Color","ancho":72,"alto":92,"gramaje":300,"hojas":250,"precioTonelada":1850}]');
+let specials=JSON.parse(localStorage.specials||'[]'); let selectedClientId=clients[0].id;
+function save(){localStorage.families=JSON.stringify(families);localStorage.clients=JSON.stringify(clients);localStorage.products=JSON.stringify(products);localStorage.specials=JSON.stringify(specials)}
+function calc(p){let c=clients.find(x=>x.id==selectedClientId)||clients[0];let s=specials.find(x=>x.clientId==selectedClientId&&x.codigo==p.codigo);let area=(p.ancho/100)*(p.alto/100);let kg=(area*p.gramaje*p.hojas)/1000;let ton=s?Number(s.precioTonelada):Number(p.precioTonelada);let base=kg*(ton/1000);if(s)return base;let total=Number(c.ajusteGeneral||0)+Number((c.ajustesFamilia||{})[p.familia]||0)+Number((c.ajustesProducto||{})[p.codigo]||0);return base*(1+total/100)}
+function money(n){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n||0)}
+function render(){save();let c=clients.find(x=>x.id==selectedClientId)||clients[0];['clienteSel','clienteSel2','clienteEsp'].forEach(id=>{let el=document.getElementById(id);if(el)el.innerHTML=clients.map(x=>`<option value="${x.id}" ${x.id==selectedClientId?'selected':''}>${x.nombre}</option>`).join('')});document.getElementById('pfamilia').innerHTML=families.map(f=>`<option>${f}</option>`).join('');document.getElementById('productoEsp').innerHTML=products.map(p=>`<option value="${p.codigo}">${p.codigo} - ${p.producto}</option>`).join('');document.getElementById('pdfCliente').textContent=c.nombre;document.getElementById('fecha').textContent=new Date().toLocaleDateString('es-UY');document.getElementById('priceRows').innerHTML=products.map(p=>`<tr><td>${p.codigo}</td><td>${p.producto}</td><td>${p.ancho}x${p.alto}</td><td>${p.gramaje} g</td><td class="right"><b>${money(calc(p))}</b></td></tr>`).join('');document.getElementById('familyList').innerHTML=families.map(f=>`<p>${f}</p>`).join('');document.getElementById('familyAdjust').innerHTML=families.map(f=>`<label>${f}<input type="number" value="${(c.ajustesFamilia||{})[f]||0}" onchange="setFam('${f}',this.value)"></label>`).join('');document.getElementById('specialTable').innerHTML='<table><tr><th>Cliente</th><th>Código</th><th>Tonelada especial</th><th></th></tr>'+specials.map(s=>`<tr><td>${(clients.find(c=>c.id==s.clientId)||{}).nombre}</td><td>${s.codigo}</td><td>${money(s.precioTonelada)}</td><td><button class="red" onclick="delSpecial('${s.id}')">Borrar</button></td></tr>`).join('')+'</table>'}
+function show(id,btn){document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');['lista','productos','clientes','familias','especiales'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!=id))}
+function addProduct(){products.push({id:Date.now()+'',codigo:pcodigo.value,producto:pproducto.value,familia:pfamilia.value,ancho:+pancho.value,alto:+palto.value,gramaje:+pgramaje.value,hojas:+phojas.value,precioTonelada:+pton.value});render()}
+function addClient(){let af={};families.forEach(f=>af[f]=0);clients.push({id:Date.now()+'',nombre:cnombre.value,ajusteGeneral:+cajuste.value,ajustesFamilia:af,ajustesProducto:{}});selectedClientId=clients.at(-1).id;render()}
+function addFamily(){if(fnombre.value&&!families.includes(fnombre.value)){families.push(fnombre.value);clients.forEach(c=>{c.ajustesFamilia=c.ajustesFamilia||{};c.ajustesFamilia[fnombre.value]=0});render()}}
+function setFam(f,v){let c=clients.find(x=>x.id==selectedClientId);c.ajustesFamilia=c.ajustesFamilia||{};c.ajustesFamilia[f]=+v;render()}
+function addSpecial(){specials=specials.filter(s=>!(s.clientId==clienteEsp.value&&s.codigo==productoEsp.value));specials.push({id:Date.now()+'',clientId:clienteEsp.value,codigo:productoEsp.value,precioTonelada:+tonEsp.value});render()}
+function delSpecial(id){specials=specials.filter(s=>s.id!=id);render()}
+function exportCSV(){let rows=[['Cliente',(clients.find(x=>x.id==selectedClientId)||{}).nombre],[],['Codigo','Producto','Formato','Gramaje','Precio'],...products.map(p=>[p.codigo,p.producto,`${p.ancho}x${p.alto}`,p.gramaje,calc(p).toFixed(2)])];let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.map(r=>r.join(';')).join('\n')]));a.download='lista-portipel.csv';a.click()}
+render();
+</script></body></html>
