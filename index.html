@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PortiPel SAS - Listas de Precios</title>
+  <style>
+    :root{--azul:#072a63;--azul2:#0b4fbd;--amarillo:#f9b900;--fondo:#f3f7fc;--borde:#d8e2ef;--texto:#071a3a;--verde:#16a34a;--rojo:#b91c1c}
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef4fb,#f8fbff);color:var(--texto)}
+    .app{display:grid;grid-template-columns:300px 1fr;min-height:100vh}.side{background:linear-gradient(180deg,#fff,#eef5ff);border-right:1px solid var(--borde);padding:22px;display:flex;flex-direction:column;gap:18px;box-shadow:12px 0 35px rgba(7,42,99,.08)}
+    .logo{width:220px;margin:0 auto 6px;display:block}.loginBox,.sideCard,.card{background:#fff;border:1px solid var(--borde);border-radius:18px;box-shadow:0 10px 30px rgba(7,42,99,.08)}.loginBox{padding:18px;text-align:center}.loginBox h2{margin:0 0 10px;color:var(--azul)}
+    input,select{width:100%;padding:12px 14px;border:1px solid #c7d5e8;border-radius:12px;font-size:14px;background:#fff} label{font-weight:700;font-size:13px;color:#0b2554;display:block;margin:4px 0 6px}.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer;background:var(--azul);color:white}.btn.yellow{background:linear-gradient(135deg,#ffcf28,#f6ad00);color:#071a3a}.btn.light{background:#fff;color:var(--azul);border:1px solid var(--borde)}.btn.red{background:var(--rojo)}.btn.green{background:var(--verde)}
+    .muted{color:#50627f}.mini{font-size:12px}.sideCard{padding:14px}.main{padding:28px 34px}.top{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--borde);border-radius:22px;padding:18px 22px;box-shadow:0 12px 35px rgba(7,42,99,.08)}.top h1{margin:0;color:var(--azul);font-size:30px}.actions{display:flex;gap:10px}.tabs{display:flex;gap:10px;margin:18px 0}.tab{background:#fff;color:var(--azul);border:1px solid var(--borde);padding:13px 18px;border-radius:13px;font-weight:800;cursor:pointer}.tab.active{background:linear-gradient(135deg,var(--azul),var(--azul2));color:#fff;box-shadow:0 8px 20px rgba(11,79,189,.22)}.card{padding:22px;margin-bottom:18px}.card h2{margin:0 0 16px;color:var(--azul);font-size:24px}.grid{display:grid;gap:14px}.grid2{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:repeat(3,1fr)}.grid4{grid-template-columns:repeat(4,1fr)}.grid6{grid-template-columns:repeat(6,1fr)}
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:14px;border:1px solid var(--borde)}th{background:linear-gradient(135deg,var(--azul),#003f99);color:#fff;text-align:left;padding:13px}td{padding:12px;border-bottom:1px solid #e4ecf6;background:#fff}tr:last-child td{border-bottom:0}.right{text-align:right}.price{font-weight:900;color:var(--azul2);font-size:18px}.pill{display:inline-block;border-radius:999px;padding:5px 9px;background:#eef5ff;color:var(--azul);font-size:12px;font-weight:800}.hidden{display:none!important}.notice{padding:14px;border:1px solid #ffe29a;background:#fffaf0;border-radius:13px;color:#694500}.footerCards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.feature{padding:16px;border:1px solid var(--borde);border-radius:16px;background:#fff}.feature b{color:var(--azul)}
+    @media(max-width:1000px){.app{grid-template-columns:1fr}.side{position:relative}.main{padding:18px}.grid2,.grid3,.grid4,.grid6,.footerCards{grid-template-columns:1fr}.top{flex-direction:column;align-items:flex-start;gap:12px}}
+    @media print{body{background:#fff}.side,.tabs,.actions,.noPrint,.card:not(#pdfCard){display:none!important}.app{display:block}.main{padding:0}.top{display:none}.card{box-shadow:none;border:0;margin:0;padding:0}#pdfCard{display:block!important}.pdfHead{border-bottom:3px solid var(--amarillo);padding-bottom:18px;margin-bottom:18px}#pdfCard table{font-size:12px}.notice{border:1px solid #ddd;background:#fff}.logoPrint{display:block!important;width:140px;margin-bottom:10px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <img class="logo" src="LOGO.png" alt="PortiPel SAS">
+    <div class="loginBox" id="loginBox">
+      <h2>Iniciar sesión</h2><p class="muted mini">Usuarios de prueba</p>
+      <input id="user" placeholder="Usuario" value="admin"><br><br><input id="pass" placeholder="Contraseña" type="password" value="admin123"><br><br>
+      <button class="btn yellow" onclick="login()">Ingresar</button>
+      <div class="sideCard" style="margin-top:14px;text-align:left"><b>admin</b> <span class="pill">Administrador</span><br><span class="mini muted">Clave: admin123</span><hr><b>usuario</b> <span class="pill">Consulta</span><br><span class="mini muted">Clave: usuario123</span></div>
+    </div>
+    <div class="sideCard"><b>PortiPel SAS</b><br><span class="muted">Soluciones en papel para tus ideas.</span></div>
+  </aside>
+  <main class="main">
+    <div class="top"><div><h1>PortiPel SAS - Listas de Precios</h1><div class="muted">Cálculo por tonelada, formato, gramaje y hojas. USD sin IVA.</div></div><div class="actions"><button class="btn yellow" onclick="window.print()">Generar PDF PRO</button><button class="btn light" onclick="exportCSV()">Exportar CSV</button><button class="btn red" onclick="resetData()">Borrar datos</button></div></div>
+    <div class="tabs noPrint"><button class="tab active" onclick="showTab('lista',this)">Lista cliente</button><button class="tab" onclick="showTab('productos',this)">Productos</button><button class="tab" onclick="showTab('clientes',this)">Clientes</button><button class="tab" onclick="showTab('familias',this)">Familias</button><button class="tab" onclick="showTab('especiales',this)">Especiales</button><button class="tab" onclick="showTab('ajustes',this)">Ajustes</button></div>
+    <section id="tab-lista" class="tabPanel"></section>
+    <section id="tab-productos" class="tabPanel hidden"></section>
+    <section id="tab-clientes" class="tabPanel hidden"></section>
+    <section id="tab-familias" class="tabPanel hidden"></section>
+    <section id="tab-especiales" class="tabPanel hidden"></section>
+    <section id="tab-ajustes" class="tabPanel hidden"></section>
+  </main>
+</div>
+<script>
+const money = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n||0));
+const fmt = n => Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2});
+const KEY='portipel_next_level_v1';
+let data = JSON.parse(localStorage.getItem(KEY)||'null') || {
+  families:['Cartulina','Obra Color','A4 Caja','Papel Antigrasa'],
+  clients:[{id:1,nombre:'Cliente General',ajusteGeneral:0,ajustesFamilia:{Cartulina:0,'Obra Color':0,'A4 Caja':0,'Papel Antigrasa':0},ajustesProducto:{}}],
+  selectedClientId:1,
+  products:[{id:1,codigo:'CBB',producto:'Cartulina Bohui BB',familia:'Cartulina',ancho:72,alto:92,gramaje:300,hojas:100,precioTonelada:1860}],
+  specials:[]
+};
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render();}
+function calcProduct(p, client){
+  const special=data.specials.find(s=>s.clientId==client.id && s.codigo==p.codigo);
+  const tonelada = special ? Number(special.precioTonelada) : Number(p.precioTonelada);
+  // Fórmula correcta: precio tonelada * gramaje * ancho_cm * alto_cm * hojas / 10.000.000.000
+  const base = tonelada * Number(p.gramaje) * Number(p.ancho) * Number(p.alto) * Number(p.hojas) / 10000000000;
+  let totalPct = 0;
+  if(!special){ totalPct = Number(client.ajusteGeneral||0)+Number(client.ajustesFamilia?.[p.familia]||0)+Number(client.ajustesProducto?.[p.codigo]||0); }
+  return {...p, precioFinal: base*(1+totalPct/100), special:!!special, totalPct, toneladaUsada:tonelada};
+}
+function selectedClient(){return data.clients.find(c=>c.id==data.selectedClientId)||data.clients[0];}
+function priceList(){const c=selectedClient();return data.products.map(p=>calcProduct(p,c));}
+function login(){document.getElementById('loginBox').querySelector('h2').textContent='Sesión iniciada';}
+function showTab(name,btn){document.querySelectorAll('.tabPanel').forEach(x=>x.classList.add('hidden'));document.getElementById('tab-'+name).classList.remove('hidden');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');}
+function setClient(id){data.selectedClientId=Number(id);save();}
+function addProduct(){const g=id=>document.getElementById(id).value;data.products.push({id:Date.now(),codigo:g('pcod'),producto:g('pnom'),familia:g('pfam'),ancho:+g('pan'),alto:+g('pal'),gramaje:+g('pgr'),hojas:+g('phj'),precioTonelada:+g('pton')});save();}
+function delProduct(id){data.products=data.products.filter(p=>p.id!=id);save();}
+function addClient(){const n=document.getElementById('cnom').value.trim();if(!n)return;const aj=Object.fromEntries(data.families.map(f=>[f,0]));data.clients.push({id:Date.now(),nombre:n,ajusteGeneral:0,ajustesFamilia:aj,ajustesProducto:{}});save();}
+function addFamily(){const n=document.getElementById('fnom').value.trim();if(!n||data.families.includes(n))return;data.families.push(n);data.clients.forEach(c=>c.ajustesFamilia[n]=0);save();}
+function setGeneral(v){selectedClient().ajusteGeneral=Number(v);save();}
+function setFam(f,v){selectedClient().ajustesFamilia[f]=Number(v);save();}
+function setProdPct(cod,v){selectedClient().ajustesProducto[cod]=Number(v);save();}
+function addSpecial(){const cod=document.getElementById('scod').value;const ton=+document.getElementById('ston').value;data.specials=data.specials.filter(s=>!(s.clientId==data.selectedClientId&&s.codigo==cod));data.specials.push({id:Date.now(),clientId:data.selectedClientId,codigo:cod,precioTonelada:ton});save();}
+function delSpecial(id){data.specials=data.specials.filter(s=>s.id!=id);save();}
+function exportCSV(){const rows=[['Cliente',selectedClient().nombre],['Codigo','Producto','Formato','Gramaje','Hojas','Precio USD'],...priceList().map(p=>[p.codigo,p.producto,`${p.ancho}x${p.alto}`,p.gramaje,p.hojas,p.precioFinal.toFixed(2)])];const csv=rows.map(r=>r.join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='lista_portipel.csv';a.click();}
+function resetData(){if(confirm('¿Borrar todos los datos guardados?')){localStorage.removeItem(KEY);location.reload();}}
+function render(){const c=selectedClient(), list=priceList();
+ document.getElementById('tab-lista').innerHTML=`<div class="card noPrint"><h2>Lista cliente</h2><select onchange="setClient(this.value)">${data.clients.map(x=>`<option ${x.id==c.id?'selected':''} value="${x.id}">${x.nombre}</option>`).join('')}</select></div><div class="card" id="pdfCard"><div class="pdfHead"><img class="logoPrint hidden" src="LOGO.png"><div style="display:flex;justify-content:space-between;gap:20px"><div><h2>PortiPel SAS</h2><p>Lista de precios comercial</p><p>Precios en USD sin IVA</p></div><div><b>Cliente:</b> ${c.nombre}<br><b>Fecha:</b> ${new Date().toLocaleDateString('es-UY')}</div></div></div><table><thead><tr><th>Código</th><th>Producto</th><th>Formato</th><th>Gramaje</th><th>Hojas</th><th class="right">Precio paquete (USD)</th></tr></thead><tbody>${list.map(p=>`<tr><td>${p.codigo}</td><td>${p.producto}</td><td>${p.ancho} x ${p.alto} cm</td><td>${p.gramaje} g</td><td>${p.hojas}</td><td class="right price">${money(p.precioFinal)}</td></tr>`).join('')}</tbody></table><div class="notice" style="margin-top:16px">Los precios están expresados en dólares estadounidenses y no incluyen IVA.</div></div><div class="footerCards noPrint"><div class="feature"><b>Confiabilidad</b><br>Datos guardados en el navegador.</div><div class="feature"><b>Rapidez</b><br>Cálculos automáticos al instante.</div><div class="feature"><b>Precisión</b><br>Fórmula correcta por tonelada.</div><div class="feature"><b>PDF PRO</b><br>Lista limpia para clientes.</div></div>`;
+ document.getElementById('tab-productos').innerHTML=`<div class="card"><h2>Productos</h2><div class="grid grid6"><input id="pcod" placeholder="Código"><input id="pnom" placeholder="Producto"><select id="pfam">${data.families.map(f=>`<option>${f}</option>`)}</select><input id="pan" placeholder="Ancho cm" type="number"><input id="pal" placeholder="Alto cm" type="number"><input id="pgr" placeholder="Gramaje" type="number"><input id="phj" placeholder="Hojas" type="number"><input id="pton" placeholder="USD tonelada" type="number"><button class="btn yellow" onclick="addProduct()">Agregar</button></div></div><div class="card"><table><tr><th>Código</th><th>Producto</th><th>Familia</th><th>Formato</th><th>Gramaje</th><th>Hojas</th><th>Tonelada</th><th></th></tr>${data.products.map(p=>`<tr><td>${p.codigo}</td><td>${p.producto}</td><td>${p.familia}</td><td>${p.ancho}x${p.alto}</td><td>${p.gramaje}</td><td>${p.hojas}</td><td>${money(p.precioTonelada)}</td><td><button class="btn red" onclick="delProduct(${p.id})">Borrar</button></td></tr>`).join('')}</table></div>`;
+ document.getElementById('tab-clientes').innerHTML=`<div class="card"><h2>Clientes</h2><div class="grid grid2"><input id="cnom" placeholder="Nombre cliente"><button class="btn yellow" onclick="addClient()">Agregar cliente</button></div><br><table><tr><th>Cliente</th><th>Ajuste general</th></tr>${data.clients.map(x=>`<tr><td>${x.nombre}</td><td>${x.ajusteGeneral}%</td></tr>`).join('')}</table></div>`;
+ document.getElementById('tab-familias').innerHTML=`<div class="card"><h2>Familias</h2><div class="grid grid2"><input id="fnom" placeholder="Nueva familia"><button class="btn yellow" onclick="addFamily()">Agregar familia</button></div><br><div class="grid grid4">${data.families.map(f=>`<div class="feature"><b>${f}</b></div>`).join('')}</div></div>`;
+ document.getElementById('tab-especiales').innerHTML=`<div class="card"><h2>Precio especial por tonelada</h2><p class="muted">El precio especial se ingresa como USD por tonelada. La app recalcula el paquete y no aplica porcentajes.</p><div class="grid grid3"><select id="scod">${data.products.map(p=>`<option value="${p.codigo}">${p.codigo} - ${p.producto}</option>`)}</select><input id="ston" placeholder="Tonelada especial USD" type="number"><button class="btn yellow" onclick="addSpecial()">Guardar especial</button></div></div><div class="card"><table><tr><th>Cliente</th><th>Código</th><th>Producto</th><th>Tonelada especial</th><th></th></tr>${data.specials.map(s=>{const p=data.products.find(x=>x.codigo==s.codigo)||{};const cl=data.clients.find(x=>x.id==s.clientId)||{};return `<tr><td>${cl.nombre}</td><td>${s.codigo}</td><td>${p.producto||''}</td><td>${money(s.precioTonelada)}</td><td><button class="btn red" onclick="delSpecial(${s.id})">Borrar</button></td></tr>`}).join('')}</table></div>`;
+ document.getElementById('tab-ajustes').innerHTML=`<div class="card"><h2>Ajustes de ${c.nombre}</h2><label>Ajuste general %</label><input type="number" value="${c.ajusteGeneral}" onchange="setGeneral(this.value)"><br><br><h3>Por familia</h3><div class="grid grid4">${data.families.map(f=>`<div><label>${f}</label><input type="number" value="${c.ajustesFamilia[f]||0}" onchange="setFam('${f.replace(/'/g,"\\'")}',this.value)"></div>`).join('')}</div><br><h3>Individual por producto</h3><table><tr><th>Código</th><th>Producto</th><th>% individual</th></tr>${data.products.map(p=>`<tr><td>${p.codigo}</td><td>${p.producto}</td><td><input type="number" value="${c.ajustesProducto[p.codigo]||0}" onchange="setProdPct('${p.codigo}',this.value)"></td></tr>`).join('')}</table></div>`;
+}
+render();
+</script>
+</body>
+</html>
